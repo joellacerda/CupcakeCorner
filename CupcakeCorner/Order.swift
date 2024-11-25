@@ -8,7 +8,7 @@
 import Foundation
 
 @Observable
-class Order {
+class Order: Codable {
     static let types = ["Vanilla", "Strawberry", "Chocolate", "Rainbow"]
     
     var type = 0
@@ -52,10 +52,25 @@ class Order {
     var zip = ""
     
     var hasValidAddress: Bool {
-        if name.isEmpty || streetAddress.isEmpty || city.isEmpty || zip.isEmpty {
+        if name.trimmingCharacters(in: .whitespaces).isEmpty ||
+            streetAddress.trimmingCharacters(in: .whitespaces).isEmpty ||
+            city.trimmingCharacters(in: .whitespaces).isEmpty ||
+            zip.trimmingCharacters(in: .whitespaces).isEmpty {
             return false
         } else {
             return true
         }
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case _type = "type"
+        case _quantity = "quantity"
+        case _specialRequestEnabled = "specialRequestEnabled"
+        case _extraFrosting = "extraFrosting"
+        case _addSprinkles = "addSprinkles"
+        case _name = "name"
+        case _city = "city"
+        case _streetAddress = "streetAddress"
+        case _zip = "zip"
     }
 }
