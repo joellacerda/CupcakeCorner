@@ -46,10 +46,18 @@ class Order: Codable {
         return cost
     }
     
-    var name = ""
-    var streetAddress = ""
-    var city = ""
-    var zip = ""
+    var name = "" {
+        didSet { saveToUserDefaults() }
+    }
+    var streetAddress = "" {
+        didSet { saveToUserDefaults() }
+    }
+    var city = "" {
+        didSet { saveToUserDefaults() }
+    }
+    var zip = "" {
+        didSet { saveToUserDefaults() }
+    }
     
     var hasValidAddress: Bool {
         if name.trimmingCharacters(in: .whitespaces).isEmpty ||
@@ -72,5 +80,28 @@ class Order: Codable {
         case _city = "city"
         case _streetAddress = "streetAddress"
         case _zip = "zip"
+    }
+    
+    // MARK: - UserDefaults Integration
+    private static let userDefaultsKey = "SavedOrder"
+       
+    init() {
+        loadFromUserDefaults()
+    }
+       
+    func saveToUserDefaults() {
+        if let encodedData = try? JSONEncoder().encode(self) {
+            UserDefaults.standard.set(encodedData, forKey: Order.userDefaultsKey)
+        }
+    }
+       
+    func loadFromUserDefaults() {
+        if let savedData = UserDefaults.standard.data(forKey: Order.userDefaultsKey),
+           let decodedOrder = try? JSONDecoder().decode(Order.self, from: savedData) {
+            self.name = decodedOrder.name
+            self.streetAddress = decodedOrder.streetAddress
+            self.city = decodedOrder.city
+            self.zip = decodedOrder.zip
+        }
     }
 }
